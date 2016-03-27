@@ -1,0 +1,42 @@
+version: '2'
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+
+  redis:  
+    image: redis
+
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  web:
+    build: .
+    depends_on:
+      - db
+    command: bash -c "sleep 5;python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    links:
+      - db
+      - worker
+
+  worker:  
+    build: .
+    environment:
+      - C_FORCE_ROOT=true
+      - DATABASE_HOST=postgresql
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+    command: bash -c "sleep 3 && celery -A lamps worker -E -l info --concurrency=1"
+    volumes:
+      - .:/code
+    links:
+      - db:db
+      - rabbitmq
+      - redis:redis
