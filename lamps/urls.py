@@ -20,5 +20,6 @@ import lampserver.views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^([0-9]{1,3})/([0-9]{1,3})/([0-9]{1,3})', lampserver.views.lamp_view),
+    url(r'^(?P<R>[0-9]{1,3})/(?P<G>[0-9]{1,3})/(?P<B>[0-9]{1,3})', lampserver.views.lamp_view),
+    url(r'^', lampserver.views.lamp_view),
 ]
