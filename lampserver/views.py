@@ -12,4 +12,9 @@ def lamp_view(request, R,B,G):
             l.lamp_values = color
             l.save()
     context = {'color':color,}
+
+    if request.is_ajax():
+        html = "Ajax updated colors to ... {}".format(color)
+        return HttpResponse(html)
+        
     return render(request, 'lampserver/lamp_view.html', context)
