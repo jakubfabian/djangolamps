@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>jQuery UI Slider - Default functionality</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <script>
+	$(document).ready(function() {
+	    $(".color-slider").each(function() {
+		var $this = $(this);
+		$(".slider", $this).slider({
+		    min: 0,
+		    max: 255,
+		    value: $(".colorval", $this).val(),
+		    slide: function( event, ui ) {
+		       $(".colorval", $this).val(ui.value);
+		    }
+		});
+	 
+	     });
+
+	     $(".linkbutton").click(function() {
+		var url = "/"+$(".colorval").map(function(){return this.value;}).get().join("/");
+	        window.location = url;
+	     });
+	});
+  </script>
+</head>
+<body>
+ 
+{% for c in color %}
+<div class="color-slider">
+<b>Color {% cycle 'Red' 'Green' 'Blue' 'Alpha'%}:</b>
+<input type="text" class="colorval" value="{{c}}" />
+<div class="slider"></div>
+</div>
+{% endfor %}
+
+<br> 
+<br> 
+Old color is {{color}}
+<br>
+<input type="button" class="linkbutton" value="Update Lamp" />
+
+</body>
+</html>

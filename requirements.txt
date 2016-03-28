@@ -6,3 +6,4 @@ celery
 Djangorestframework
 redis
 django-dbarray
+spidev
