@@ -1,15 +1,15 @@
 version: '2'
 services:
   db:
-    image: postgres
+    image: linguofeng/rpi-postgres
     ports:
       - "5432:5432"
 
   redis:  
-    image: redis
+    image: hypriot/rpi-redis
 
   rabbitmq:
-    image: rabbitmq
+    image: wsrak/rpi-rabbitmq:v3.5.7
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -21,6 +21,8 @@ services:
     command: bash -c "sleep 5;python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
+    devices:
+      - "/dev/spidev0.0:/dev/spidev0.0"
     ports:
       - "8000:8000"
     links:
@@ -33,10 +35,12 @@ services:
       - C_FORCE_ROOT=true
       - DATABASE_HOST=postgresql
       - BROKER_URL=amqp://guest:guest@rabbitmq//
-    command: bash -c "sleep 3 && celery -A lamps worker -E -l info --concurrency=1"
+    command: bash -c "sleep 8 && celery -A lamps worker -E -l info --concurrency=1"
     volumes:
       - .:/code
+    devices:
+      - "/dev/spidev0.0:/dev/spidev0.0"
     links:
       - db:db
       - rabbitmq
-      - redis:redis
+      - redis
