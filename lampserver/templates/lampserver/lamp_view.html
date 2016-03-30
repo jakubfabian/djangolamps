@@ -3,12 +3,19 @@
 <head>
   <meta charset="utf-8">
   <title>jQuery UI Slider - Default functionality</title>
+<!--
   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+-->
+  <meta name="viewport" content="width=device-width, initial-scale=1"> 
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+  <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+  <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
   <script>
 	    function ajaxupdate() {
-	            var url = "/"+$(".colorval").map(function(){return this.value;}).get().join("/");
+	            var url = "/"+$(".slider").map(function(){return this.value;}).get().join("/");
+                    console.log(url)
 	            $.ajax({
                             url: url,
                             success: function(data) {
@@ -23,18 +30,7 @@
 	$(document).ready(function() {
 	    $(".color-slider").each(function() {
 		var $this = $(this);
-		$(".slider", $this).slider({
-		    min: 0,
-		    max: 255,
-		    value: $(".colorval", $this).val(),
-		    slide: function( event, ui ) {
-		       $(".colorval", $this).val(ui.value);
-                    },
-		    stop: function( event, ui ) {
-                       ajaxupdate();
-		    },
-		});
-	 
+		$(".slider", $this).on("slidestart", function( event, ui ) { ajaxupdate(); });
 	     });
 
 	     $(".linkbutton").click(function() {
@@ -51,18 +47,20 @@
  
 {% for c in color %}
 <div class="color-slider">
-<b>Color {% cycle 'Red' 'Green' 'Blue' 'Alpha'%}:</b>
-<input type="text" class="colorval" value="{{c}}" />
+    <label for="slider_{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}">{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}</label>
+    <input class="slider" type="range" name="{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}" id="slider_{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}" value="{{c}}" min="0" max="255">
 <div class="slider"></div>
 </div>
 {% endfor %}
 
+<!--
 <br> 
 <br> 
 <div class="oldcolor"> Old color is {{color}} </div>
 <br>
 <input type="button" class="linkbutton" value="Update Lamp" />
 <input type="button" class="ajaxlinkbutton" value="Ajax Update Lamp" />
+-->
 
 </body>
 </html>
