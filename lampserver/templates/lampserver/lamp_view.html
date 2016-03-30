@@ -48,7 +48,7 @@
 {% for c in color %}
 <div class="color-slider">
     <label for="slider_{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}">{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}</label>
-    <input class="slider" type="range" name="{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}" id="slider_{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}" value="{{c}}" min="0" max="255">
+    <input class="slider" type="range" name="{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}" id="slider_{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}" value="{{c}}" min="0" max="255" step="8">
 <div class="slider"></div>
 </div>
 {% endfor %}
