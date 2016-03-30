@@ -25,11 +25,9 @@ def lamp_values(lamps):
         v = []
         for l in lamps:
                 R,G,B,A = [ gamma_correct(i) for i in l ]
-                brightness = [ (15<<5)| 63 ] # first 4 ones and then 63 is full brightness dimming
-                brightness = [ (15<<5)| 1 ] # first 4 ones and then 63 is full brightness dimming
-                brightness = [ (15<<5)| int(A/255.*15+.5) ] # first 4 ones and then 63 is full brightness dimming
+                brightness = [ (7<<5) | int(A/255.*63) ] # first 3 ones and then 63 is full brightness dimming
                 v+=brightness+[B,G,R]
-        print 'brightness', brightness
+        #print 'brightness', brightness, '::', A
 
         return start+v+end
 
@@ -40,7 +38,7 @@ def update_lamps():
 
     Nlamps = 300
 
-    print('Started update_lamps worker')
+    #print('Started update_lamps worker')
     lamps = LEDLamp.objects.all()
 
     if len(lamps)!=Nlamps:
