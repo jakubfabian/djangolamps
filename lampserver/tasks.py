@@ -25,7 +25,7 @@ def lamp_values(lamps):
         v = []
         for l in lamps:
                 R,G,B,A = [ gamma_correct(i) for i in l ]
-                brightness = [ (7<<5) | int(A/255.*63) ] # first 3 ones and then 63 is full brightness dimming
+                brightness = [ (7<<5) | int(A/255.*32) ] # first 3 ones and then 32 is full brightness dimming
                 v+=brightness+[B,G,R]
         #print 'brightness', brightness, '::', A
 
