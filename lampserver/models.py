@@ -8,3 +8,6 @@ import dbarray
 
 class LEDLamp(models.Model):
     lamp_values = dbarray.IntegerArrayField(null=True)
+
+class tasktime(models.Model):
+    time = models.BigIntegerField()

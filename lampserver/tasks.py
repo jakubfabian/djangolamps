@@ -1,9 +1,11 @@
 from __future__ import absolute_import
 
-from celery import shared_task
+from celery import shared_task,task
 import time
 import spidev
-from lampserver.models import LEDLamp
+from lampserver.models import LEDLamp, tasktime
+from itertools import cycle
+from django.core.cache import cache
 
 
 SPI=None
@@ -24,8 +26,9 @@ def lamp_values(lamps):
         end = [255]*(4*(len(lamps)//64+1)) # 4 byte end for each 64 lamps
         v = []
         for l in lamps:
-                R,G,B,A = [ gamma_correct(i) for i in l ]
-                brightness = [ (7<<5) | int(A/255.*32) ] # first 3 ones and then 32 is full brightness dimming
+                R,G,B,_ = [ gamma_correct(i) for i in l ]
+		A = l[-1]
+                brightness = [ (7<<5) | int(A/255.*31) ] # first 3 ones and then 32 is full brightness dimming
                 v+=brightness+[B,G,R]
         #print 'brightness', brightness, '::', A
 
@@ -56,3 +59,31 @@ def update_lamps():
     #time.sleep(1e-2)
         
     return
+
+
+@task(ignore_result=True)
+def do_cmap(fwdcolors, Nlamps, time, Ncolorsteps=8, Nmaps=22, **kwargs):
+    global SPI
+    revcolors = fwdcolors[::-1]
+
+    all_colors = fwdcolors + revcolors
+    all_colors *= int(Nmaps)
+    all_colors = all_colors[::int(Ncolorsteps)]
+
+    colorcycles = [ cycle( all_colors ) for i in range(Nlamps) ]
+
+    if SPI is None:
+	    SPI = spidev.SpiDev()
+	    SPI.open(0,0)
+	    SPI.max_speed_hz = 1250000*4
+
+    for li,cc in enumerate(colorcycles):
+        Ncycles = (li * len(all_colors)) // Nlamps  # we want to cycle the colormap forward for equidistant colors
+        [ next(cc) for k in range(Ncycles) ]
+
+    while True:
+        colorlist = [ next(c) for c in colorcycles ]
+        colorlist = [ [ int(c*255) for c in cl] for cl in colorlist]
+        spi_send(SPI, colorlist)
+        if time != tasktime.objects.first().time:
+            return

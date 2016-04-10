@@ -30,7 +30,7 @@
 	$(document).ready(function() {
 	    $(".color-slider").each(function() {
 		var $this = $(this);
-		$(".slider", $this).on("slidestart", function( event, ui ) { ajaxupdate(); });
+		$(".slider", $this).on("slidestop", function( event, ui ) { ajaxupdate(); });
 	     });
 
 	     $(".linkbutton").click(function() {

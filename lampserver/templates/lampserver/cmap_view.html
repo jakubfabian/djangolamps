@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>jQuery UI Slider - Default functionality</title>
+<!--
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+-->
+  <meta name="viewport" content="width=device-width, initial-scale=1"> 
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+  <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+  <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+</head>
+<body>
+ 
+
+<div data-role="page" id="page1">
+  <script>
+	    function ajaxupdate() {
+	            var url = "/cmap/{{cmap_name}}/"+$(".slider").map(function(){return this.value;}).get().join("/");
+                    $('h1').text('upd:'+url);
+                    //alert(url);
+	            $.ajax({
+                            url: url,
+                            success: function(data) {
+                                //alert(data);
+                                //$('h1').text(url);
+                                $(".debug").html(data);
+                            },
+                            failure: function(data) { 
+                                alert('Got an error dude');
+                            }
+                    }); 
+                    $('.cmaplinklist').find('a').each(function() {
+                         //console.log($(this).attr('href'));
+			 $(this).attr('href', url);
+                    });
+            }
+	$(document).on("pageshow", function() {
+	    $('h1').text($('h1').text()+'.');
+	    $(".int-slider").each(function() {
+		var $this = $(this);
+		$(".slider", $this).on("slidestop", function( event, ui ) { ajaxupdate(); });
+	     });
+	});
+  </script>
+
+  <div data-role="header">
+    <h1>Colormaps on lamp</h1>
+  </div>
+
+  <div role="main" class="ui-content">
+    <div class="int-slider">
+        <label for="slider_nmaps">alpha</label>
+        <input class="slider" type="range"
+    	   name="alpha"
+    	   id="slider_alpha"
+    	   value="{{alpha}}" min="0" max="255" step="8">
+        <div class="slider"></div>
+    </div>
+    <div class="int-slider">
+        <label for="slider_nmaps">Nmaps</label>
+        <input class="slider" type="range"
+    	   name="Nmaps"
+    	   id="slider_Nmaps"
+    	   value="{{Nmaps}}" min="1" max="60" step="1">
+        <div class="slider"></div>
+    </div>
+    <div class="int-slider">
+        <label for="slider_speed">Speed</label>
+        <input class="slider" type="range"
+    	   name="Speed"
+    	   id="slider_speed"
+    	   value="{{Ncolorsteps}}" min="0" max="20" step="1">
+        <div class="slider"></div>
+    </div>
+<br>
+    <div class="cmaplinklist">
+        <ul data-role="listview">
+            {% for cmap in cmaplist %}
+                <li><a href="{% url 'cmap_view' cmname=cmap alpha=alpha Nmaps=Nmaps Ncolorsteps=Ncolorsteps %}" rel="external">{{cmap}}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+  </div>
+<div>
+
+</body>
+</html>
