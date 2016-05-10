@@ -85,5 +85,6 @@ def do_cmap(fwdcolors, Nlamps, time, Ncolorsteps=8, Nmaps=22, **kwargs):
         colorlist = [ next(c) for c in colorcycles ]
         colorlist = [ [ int(c*255) for c in cl] for cl in colorlist]
         spi_send(SPI, colorlist)
-        if time != tasktime.objects.first().time:
+        if time != tasktime.objects.order_by('id').first().time:
+            # print 'Exit cmap loop bc:', time, tasktime.objects.order_by('id').first().time
             return

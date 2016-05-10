@@ -20,10 +20,10 @@ import lampserver.views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^(?P<R>[0-9]{1,3})/(?P<G>[0-9]{1,3})/(?P<B>[0-9]{1,3})/(?P<A>[0-9]{1,3})', lampserver.views.lamp_view),
     #url(r'^cmap/(?P<cmname>\w+)/(?<ncolorsteps>\d+)/(?<nmaps>\d+)', lampserver.views.cmap),
     url(r'^cmap/(?P<cmname>\w+)/(?P<alpha>[0-9]{1,3})/(?P<Nmaps>[0-9]{1,3})/(?P<Ncolorsteps>[0-9]{1,3})', lampserver.views.cmap,name='cmap_view'),
     url(r'^cmap/(?P<cmname>\w+)', lampserver.views.cmap),
     url(r'^cmap', lampserver.views.cmap),
+    url(r'^(?P<R>[0-9]{1,3})/(?P<G>[0-9]{1,3})/(?P<B>[0-9]{1,3})/(?P<A>[0-9]{1,3})', lampserver.views.lamp_view),
     url(r'^', lampserver.views.lamp_view),
 ]

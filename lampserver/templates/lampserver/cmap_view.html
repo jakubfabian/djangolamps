@@ -11,12 +11,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"> 
   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
   <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<!--
+  <script type="text/javascript">
+  $(document).bind("mobileinit", function () {
+	  $.mobile.ajaxEnabled = false;
+  });
+  </script>
+-->
   <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
 </head>
 <body>
  
 
-<div data-role="page" id="page1">
+<div data-role="page" id="home" data-url="cmap/">
   <script>
 	    function ajaxupdate() {
 	            var url = "/cmap/{{cmap_name}}/"+$(".slider").map(function(){return this.value;}).get().join("/");
@@ -38,7 +45,7 @@
 			 $(this).attr('href', url);
                     });
             }
-	$(document).on("pageshow", function() {
+	$(document).on("pageinit", function() {
 	    $('h1').text($('h1').text()+'.');
 	    $(".int-slider").each(function() {
 		var $this = $(this);
@@ -86,6 +93,8 @@
     </div>
   </div>
 <div>
+{% comment %}
+{% endcomment %}
 
 </body>
 </html>

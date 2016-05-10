@@ -9,16 +9,17 @@ import time
 
 def update_commando_time():
     timestamp = int(time.time())
-    t = tasktime.objects.first()
+    t = tasktime.objects.order_by('id').first()
     t.time = timestamp
     t.save()
+    # print 'update time_cmd', timestamp
     return timestamp
 
 
 
 # Create your views here.
 def lamp_view(request, **kwargs):
-    print kwargs
+    # print 'lamp_view:', kwargs
     color = LEDLamp.objects.order_by('id')[0].lamp_values
 
     if 'R' in kwargs:
@@ -41,6 +42,7 @@ def lamp_view(request, **kwargs):
 
     if request.is_ajax():
         html = "Ajax updated colors to ... {}".format(color)
+        # print 'ajax lamp_view:', kwargs
         return HttpResponse(html)
         
     return render(request, 'lampserver/lamp_view.html', context)
