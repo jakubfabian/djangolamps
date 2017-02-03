@@ -54,10 +54,10 @@ def cmap(request, **kwargs):
 
     maps = sorted(m for m in plt.cm.datad if not m.endswith("_r"))
 
-    cmap_name   = kwargs['cmname']      if 'cmname'      in kwargs else 'jet'
-    alpha       = kwargs['alpha']       if 'alpha'       in kwargs else 127
+    cmap_name   = kwargs['cmname']      if 'cmname'      in kwargs else 'hot'
+    alpha       = kwargs['alpha']       if 'alpha'       in kwargs else 255
     Ncolorsteps = kwargs['Ncolorsteps'] if 'Ncolorsteps' in kwargs else 1
-    Nmaps       = kwargs['Nmaps']       if 'Nmaps'       in kwargs else 22
+    Nmaps       = kwargs['Nmaps']       if 'Nmaps'       in kwargs else 1
 
     cmap = get_cmap(cmap_name)
     colors = [ cmap(i) for i in range(cmap.N) ]
