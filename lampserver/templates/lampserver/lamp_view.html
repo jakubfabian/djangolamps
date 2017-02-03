@@ -14,7 +14,7 @@
   <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
   <script>
 	    function ajaxupdate() {
-	            var url = "/"+$(".slider").map(function(){return this.value;}).get().join("/");
+	            var url = "/rgb/"+$(".slider").map(function(){return this.value;}).get().join("/");
                     console.log(url)
 	            $.ajax({
                             url: url,
@@ -34,7 +34,7 @@
 	     });
 
 	     $(".linkbutton").click(function() {
-		var url = "/"+$(".colorval").map(function(){return this.value;}).get().join("/");
+		var url = "/rgb/"+$(".colorval").map(function(){return this.value;}).get().join("/");
 	        window.location = url;
 	     });
 
