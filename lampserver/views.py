@@ -10,6 +10,8 @@ import time
 def update_commando_time():
     timestamp = int(time.time())
     t = tasktime.objects.order_by('id').first()
+    if t is None:
+        t = tasktime()
     t.time = timestamp
     t.save()
     # print 'update time_cmd', timestamp
@@ -33,7 +35,7 @@ def lamp_view(request, **kwargs):
 
     update_commando_time()
     with transaction.atomic():
-        for l in LEDLamp.objects.order_by('id'):
+        for i,l in enumerate(LEDLamp.objects.order_by('id')):
             l.lamp_values = color
             l.save()
     print 'Current color to be set:', LEDLamp.objects.order_by('id')[0].lamp_values
@@ -54,7 +56,7 @@ def cmap(request, **kwargs):
 
     maps = sorted(m for m in plt.cm.datad if not m.endswith("_r"))
 
-    cmap_name   = kwargs['cmname']      if 'cmname'      in kwargs else 'hot'
+    cmap_name   = kwargs['cmname']      if 'cmname'      in kwargs else 'autumn'
     alpha       = kwargs['alpha']       if 'alpha'       in kwargs else 255
     Ncolorsteps = kwargs['Ncolorsteps'] if 'Ncolorsteps' in kwargs else 1
     Nmaps       = kwargs['Nmaps']       if 'Nmaps'       in kwargs else 1
@@ -64,7 +66,7 @@ def cmap(request, **kwargs):
     for i,c in enumerate(colors):
         colors[i] = c[:3] + (c[3]*int(alpha)/255.,)
 
-    do_cmap.delay(colors, 300, update_commando_time(), Ncolorsteps, Nmaps)
+    do_cmap.delay(colors, 240, update_commando_time(), Ncolorsteps, Nmaps)
 
     context = {'cmap_name':cmap_name,
                'alpha':alpha,

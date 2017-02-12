@@ -25,11 +25,14 @@ def lamp_values(lamps):
         start = [0]*4
         end = [255]*(4*(len(lamps)//64+1)) # 4 byte end for each 64 lamps
         v = []
-        for l in lamps:
+        for il, l in enumerate(lamps):
                 R,G,B,_ = [ gamma_correct(i) for i in l ]
 		A = l[-1]
                 brightness = [ (7<<5) | int(A/255.*31) ] # first 3 ones and then 32 is full brightness dimming
-                v+=brightness+[B,G,R]
+		if il==131: # bad pixeln on ute's lamp
+		    v+=brightness+[0,0,0]
+		else:
+		    v+=brightness+[B,G,R]
         #print 'brightness', brightness, '::', A
 
         return start+v+end
@@ -39,7 +42,7 @@ def lamp_values(lamps):
 def update_lamps():
     global SPI
 
-    Nlamps = 300
+    Nlamps = 240
 
     #print('Started update_lamps worker')
     lamps = LEDLamp.objects.all()
