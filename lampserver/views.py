@@ -3,9 +3,9 @@ from django.db import transaction
 from lampserver.models import LEDLamp, tasktime
 
 from django.http import HttpResponse
+from django.http import JsonResponse
 from .tasks import update_lamps, do_cmap
 import time
-
 
 def update_commando_time():
     timestamp = int(time.time())
@@ -15,9 +15,14 @@ def update_commando_time():
     # print 'update time_cmd', timestamp
     return timestamp
 
+def get_lamp_colors(request, **kwargs):
+    color = LEDLamp.objects.order_by('id')[0].lamp_values
+    context = {
+            'colors': color,
+            }
 
+    return JsonResponse( context )
 
-# Create your views here.
 def lamp_view(request, **kwargs):
     # print 'lamp_view:', kwargs
     color = LEDLamp.objects.order_by('id')[0].lamp_values
@@ -40,11 +45,6 @@ def lamp_view(request, **kwargs):
     update_lamps()
     context = {'color':color,}
 
-    if request.is_ajax():
-        html = "Ajax updated colors to ... {}".format(color)
-        # print 'ajax lamp_view:', kwargs
-        return HttpResponse(html)
-        
     return render(request, 'lampserver/lamp_view.html', context)
 
 
@@ -73,8 +73,3 @@ def cmap(request, **kwargs):
                'cmaplist':maps,
               }
     return render(request, 'lampserver/cmap_view.html', context)
-    return HttpResponse("you called me ... {}".format(kwargs))
-
-
-
-

@@ -1,69 +1,71 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>jQuery UI Slider - Default functionality</title>
-<!--
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
--->
-  <meta name="viewport" content="width=device-width, initial-scale=1"> 
-  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
-  <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-  <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
-  <script>
-	    function ajaxupdate() {
-	            var url = "/rgb/"+$(".slider").map(function(){return this.value;}).get().join("/");
-                    console.log(url)
-	            $.ajax({
-                            url: url,
-                            success: function(data) {
-                                //alert(data);
-                                $(".oldcolor").html(data);
-                            },
-                            failure: function(data) { 
-                                alert('Got an error dude');
-                            }
-                    }); 
-            }
-	$(document).ready(function() {
-	    $(".color-slider").each(function() {
-		var $this = $(this);
-		$(".slider", $this).on("slidestop", function( event, ui ) { ajaxupdate(); });
-	     });
+{% extends "base.html" %}
+{% block additional_js %}
+<script>
+function ajaxupdate() {
+    var colors = get_current_slider_colors();
+    var url = "/rgb/"+colors.join("/");
+    console.log(url);
+    $.ajax({
+        url: url,
+        success: function(data) {
+            $(".oldcolor").html(data);
+        },
+        failure: function(data) { 
+            alert('Got an error dude');
+        }
+    }); 
+}
 
-	     $(".linkbutton").click(function() {
-		var url = "/rgb/"+$(".colorval").map(function(){return this.value;}).get().join("/");
-	        window.location = url;
-	     });
+function get_current_slider_colors() {
+    return $(".slider-input").map(function(){return this.value;}).get();
+}
 
-	     $(".ajaxlinkbutton").click(function() {ajaxupdate()});
+function colors_watcher_update() {
+    var colors = get_current_slider_colors();
 
-	});
-  </script>
-</head>
-<body>
- 
-{% for c in color %}
-<div class="color-slider">
-    <label for="slider_{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}">{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}</label>
-    <input class="slider" type="range" name="{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}" id="slider_{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}" value="{{c}}" min="0" max="255" step="8">
-<div class="slider"></div>
+    $.get( "{% url 'rgb_get_lamp_colors' %}", function( data ) {
+        db_colors=data.colors;
+        if(colors.join(',') !== data.colors.join(',')) {
+            //console.log('updating colors from', colors.join(','), data.colors.join(','));
+            $( ".slider-input" ).each(function(idx) {
+                $(this).val(data.colors[idx]).slider( "refresh" );
+            });
+            ajaxupdate();
+        } else {
+            console.log('colors are up to date:', data.colors.join(', '));
+        }
+    });
+}
+
+$(document).on("pageinit", function() {
+    $(".slider-input").slider();
+    $(".color-slider").each(function() {
+        var $this = $(this);
+        $(".slider-input", $this).on("slidestop", function( event, ui ) { ajaxupdate(); });
+    });
+    setInterval( colors_watcher_update, 5000);
+});
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div role="main" class="ui-content">
+    {% for c in color %}
+    <div class="color-slider">
+        <label for="slider_{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}">
+            {% cycle 'Red' 'Green' 'Blue' 'Alpha'%}
+        </label>
+        <input class="slider-input"
+               type="range"
+               name="{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}"
+               id="slider_{% cycle 'Red' 'Green' 'Blue' 'Alpha'%}"
+               value="{{c}}" min="0" max="255" step="8">
+    </div>
+    {% endfor %}
+
+    <form>
+        <input type="button" onclick="history.go(0)" value="Refresh">
+    </form>
 </div>
-{% endfor %}
-
-<!--
-<br> 
-<br> 
-<div class="oldcolor"> Old color is {{color}} </div>
-<br>
-<input type="button" class="linkbutton" value="Update Lamp" />
-<input type="button" class="ajaxlinkbutton" value="Ajax Update Lamp" />
--->
-<FORM>
-<INPUT TYPE="button" onClick="history.go(0)" VALUE="Refresh">
-</FORM>
-
-</body>
-</html>
+{% endblock %}
