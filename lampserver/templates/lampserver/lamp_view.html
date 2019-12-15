@@ -21,7 +21,7 @@ function ajaxupdate() {
 }
 
 function get_current_slider_colors() {
-    return $(".slider-input").map(function(){return this.value;}).get();
+    return $(".slider-input").map(function(){return this.value;}).get().slice(0,4);
 }
 
 function colors_watcher_update() {
@@ -42,7 +42,6 @@ function colors_watcher_update() {
 }
 
 $(document).on("pageinit", function() {
-    $(".slider-input").slider();
     $(".color-slider").each(function() {
         var $this = $(this);
         $(".slider-input", $this).on("slidestop", function( event, ui ) { ajaxupdate(); });
