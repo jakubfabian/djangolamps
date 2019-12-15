@@ -2,14 +2,24 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>jQuery UI Slider - Default functionality</title>
+        <title>DjangoLampControl</title>
         <meta name="viewport" content="width=device-width, initial-scale=1"> 
-        <!--link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
-        <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-        <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script-->
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
         <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
         <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+        <script>
+$(document).on("pagecontainerchange.fixcache", $.mobile.pageContainer, function (event, ui) {
+    if ($.mobile.firstPage.is('[data-dom-cache="true"]') || $.mobile.page.prototype.options.domCache && $.mobile.firstPage.is(':not([data-dom-cache="false"])')) {
+        $(document).off('pagecontainerchange.fixcache');
+    } else if (ui.prevPage != undefined) {
+        if (!($(ui.toPage).hasClass('ui-dialog') || $(ui.prevPage).hasClass('ui-dialog'))) {
+            $.mobile.firstPage.remove();
+            $(document).off('pagecontainerchange.fixcache');
+        }
+    }
+});
+        </script>
     </head>
     <body>
 
