@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 {% block additional_js %}
 <script>
+locked_colors = false;
+
 function ajaxupdate() {
+    locked_colors = true;
     var colors = get_current_slider_colors();
     var url = "/rgb/"+colors.join("/");
     console.log(url);
@@ -9,6 +12,7 @@ function ajaxupdate() {
         url: url,
         success: function(data) {
             $(".oldcolor").html(data);
+            locked_colors = false;
         },
         failure: function(data) { 
             alert('Got an error dude');
@@ -21,6 +25,7 @@ function get_current_slider_colors() {
 }
 
 function colors_watcher_update() {
+    if (locked_colors === true) { return; }
     var colors = get_current_slider_colors();
 
     $.get( "{% url 'rgb_get_lamp_colors' %}", function( data ) {
@@ -30,7 +35,6 @@ function colors_watcher_update() {
             $( ".slider-input" ).each(function(idx) {
                 $(this).val(data.colors[idx]).slider( "refresh" );
             });
-            ajaxupdate();
         } else {
             console.log('colors are up to date:', data.colors.join(', '));
         }
@@ -43,7 +47,7 @@ $(document).on("pageinit", function() {
         var $this = $(this);
         $(".slider-input", $this).on("slidestop", function( event, ui ) { ajaxupdate(); });
     });
-    setInterval( colors_watcher_update, 5000);
+    colors_watcher = setInterval( colors_watcher_update, 1000);
 });
 
 </script>
@@ -63,9 +67,5 @@ $(document).on("pageinit", function() {
                value="{{c}}" min="0" max="255" step="8">
     </div>
     {% endfor %}
-
-    <form>
-        <input type="button" onclick="history.go(0)" value="Refresh">
-    </form>
 </div>
 {% endblock %}
