@@ -45,6 +45,7 @@ $(document).on("pageinit", function() {
     $(".color-slider").each(function() {
         var $this = $(this);
         $(".slider-input", $this).on("slidestop", function( event, ui ) { ajaxupdate(); });
+        $(".slider-input", $this).on("slidestart", function( event, ui ) { locked_colors = true; });
     });
     colors_watcher = setInterval( colors_watcher_update, 1000);
 });
